@@ -111,4 +111,4 @@ class Datareader:
 
         print("music_dict len:", len(music_dict), "fashion_dict len:", len(fashion_dict))
         return self.music_rating_dict, self.music_review_dict, self.item_music_dict, \
-            self.fashion_rating_dict, self.fashion_review_dict, self.item_fashion_dict 
+            self.fashion_rating_dict, self.fashion_review_dict, self.item_fashion_dict
