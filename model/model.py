@@ -13,5 +13,5 @@ class Net(nn.Module):
                         MLP(input_dim))
 
     def forward(self, x):
-        x = model(x)
+        x = self.model(x)
         return x
