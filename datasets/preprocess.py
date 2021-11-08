@@ -10,6 +10,7 @@ if __name__ == '__main__':
     for user, reviews in music_review_dict.items():
         str = ""
         for each in reviews:
+            str += " "
             str += each[1]
         print(str, user)
         tagged_data.append(TaggedDocument(words=word_tokenize(str), tags=[user]))
@@ -27,7 +28,6 @@ if __name__ == '__main__':
     model.build_vocab(tagged_data)
 
     for epoch in range(max_epochs):
-        print('iteration {0}'.format(epoch))
         model.train(tagged_data,
                     total_examples=model.corpus_count,
                     epochs=model.epochs)
@@ -35,5 +35,7 @@ if __name__ == '__main__':
         model.alpha -= 0.0002
         # fix the learning rate, no decay
         model.min_alpha = model.alpha
+        if epoch % 10 == 0:
+            print('iteration {0}'.format(epoch))
 
-    print(model.docvecs['A2UUEV4MYOJY66'])
+    print(model.dv['A2UUEV4MYOJY66'])
