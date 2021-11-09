@@ -2,10 +2,7 @@ import model.model.Net as Net
 from torch import optim
 from utils import NDCG, HR
 
-def train(epochs=epochs):
-    # TODO
-    # Data
-
+def train(feature, adj, epochs=epochs):
     model = Net(input_dim, output_dim, num_features_nonzero)
     model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.02)
@@ -13,8 +10,6 @@ def train(epochs=epochs):
         out = model((feature, adj))
 
         loss = rating * torch.log(out) + (torch.ones_like(rating) - rating) * torch.log(torch.ones_like(out) - out)
-
-        # acc = ?
 
         optimizer.zero_grad()
         loss.backward()
@@ -24,6 +19,8 @@ def train(epochs=epochs):
             print(epoch, loss.item())
 
     model.eval()
+
+    out = model((feature, adj))
 
     print("NDCG@10: ", NDCG(rating, out))
     print("HR@10: ", HR(rating, out))

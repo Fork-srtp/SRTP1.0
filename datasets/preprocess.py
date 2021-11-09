@@ -3,7 +3,7 @@ from datareader import Datareader
 from nltk.tokenize import word_tokenize
 import networkx as nx
 
-if __name__ == '__main__':
+def preprocess():
     dr = Datareader()
     music_rating_dict, music_review_dict, item_music_dict, \
             fashion_rating_dict, fashion_review_dict, item_fashion_dict = dr.read_data()
@@ -53,14 +53,12 @@ if __name__ == '__main__':
     G = nx.Graph()
     for index, node in enumerate(idset):
         idstr2num[node] = index
-        G.add_node(index, feature=[])
-        # replace the true feature with the following one
-        # G.add_node(index, feature=model.dv[node])
+        G.add_node(index, feature=model.dv[node])
 
     # add edge weight
     for key, value in music_rating_dict.items():
         G.add_weighted_edges_from([(idstr2num[key], idstr2num[items[0]], items[1]) for items in value])
 
-    print(G)
+    # print(G)
 
-
+    return G.adj, G.feature
