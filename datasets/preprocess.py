@@ -1,6 +1,7 @@
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from datareader import Datareader
 from nltk.tokenize import word_tokenize
+import networkx as nx
 
 if __name__ == '__main__':
     dr = Datareader()
@@ -39,3 +40,27 @@ if __name__ == '__main__':
             print('iteration {0}'.format(epoch))
 
     print(model.dv['A2UUEV4MYOJY66'])
+
+    idset = [_key for _key in music_review_dict.keys()]
+    itemset = []
+    for _key in idset:
+        itemset.extend([r[0] for r in music_review_dict[_key]])
+
+    idset.extend(itemset)
+    idset = list(set(idset))  # delete the repeated elements
+    idstr2num = {}
+
+    G = nx.Graph()
+    for index, node in enumerate(idset):
+        idstr2num[node] = index
+        G.add_node(index, feature=[])
+        # replace the true feature with the following one
+        # G.add_node(index, feature=model.dv[node])
+
+    # add edge weight
+    for key, value in music_rating_dict.items():
+        G.add_weighted_edges_from([(idstr2num[key], idstr2num[items[0]], items[1]) for items in value])
+
+    print(G)
+
+
