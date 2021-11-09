@@ -1,9 +1,10 @@
+import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from datareader import Datareader
 from nltk.tokenize import word_tokenize
 import networkx as nx
 
-def preprocess():
+def preprocess(items=None):
     dr = Datareader()
     music_rating_dict, music_review_dict, item_music_dict, \
             fashion_rating_dict, fashion_review_dict, item_fashion_dict = dr.read_data()
@@ -16,7 +17,7 @@ def preprocess():
         print(str, user)
         tagged_data.append(TaggedDocument(words=word_tokenize(str), tags=[user]))
 
-    max_epochs = 100
+    max_epochs = 10
     vec_size = 20
     alpha = 0.025
 
@@ -53,12 +54,20 @@ def preprocess():
     G = nx.Graph()
     for index, node in enumerate(idset):
         idstr2num[node] = index
-        G.add_node(index, feature=model.dv[node])
+        G.add_node(index, feature=[1,2,3])
+
+        # G.add_node(index, feature=model.dv[node])
 
     # add edge weight
+    # adjacent_mat = np.zeros()
     for key, value in music_rating_dict.items():
         G.add_weighted_edges_from([(idstr2num[key], idstr2num[items[0]], items[1]) for items in value])
+        print([(idstr2num[key], idstr2num[items[0]], items[1]) for items in value]);
 
-    # print(G)
 
-    return G.adj, G.feature
+    features = [a[1]['feature'] for a in G.nodes.data()]
+
+
+    return G.adj, features
+
+preprocess()
