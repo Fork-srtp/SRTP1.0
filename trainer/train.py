@@ -1,5 +1,6 @@
 import model.model.Net as Net
 from torch import optim
+from utils import NDCG
 
 def train(epochs=epochs):
     # TODO
@@ -23,3 +24,5 @@ def train(epochs=epochs):
             print(epoch, loss.item())
 
     model.eval()
+
+    print("NDCG@10: ", NDCG(rating, out))
