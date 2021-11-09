@@ -22,4 +22,34 @@ def NDCG(y, y_pred, k=10):
     sorted_pred, indices_pred = torch.sort(y_pred, descending=True, stable=True)
 
     sorted = sorted[:,:10]
-    sorted_pred = #TODO
+    indices_pred = indices_pred[:,:10]
+    
+    for i in y.size(dim=0):
+        if i == 0:
+            sorted_pred = y[i][indices_pred[i]]
+        else:
+            sorted_pred = torch.cat((sorted_pred, y[i][indices_pred[i]]), 0)
+
+    dcg = DCG(sorted_pred)
+    idcg = DCG(sorted)
+
+    ndcg = dcg / idcg
+    return ndcg
+
+def HR(y, y_pred, k=10):
+    sorted, indices = torch.sort(y, descending=True, stable=True)
+    sorted_pred, indices_pred = torch.sort(y_pred, descending=True, stable=True)
+
+    indices = indices[:,:10]
+    indices_pred = indices_pred[:,:10]
+
+    count = 0
+
+    for i in indices.size(dim=0):
+        for item in indices[i]:
+            if item in indices_pred[i]:
+                count += 1
+
+    total = indices.size(dim=0) * indices.size(dim=1)
+
+    return count / total
