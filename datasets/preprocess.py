@@ -1,3 +1,4 @@
+import numpy as np
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from datasets.datareader import Datareader
 from nltk.tokenize import word_tokenize
@@ -111,6 +112,3 @@ def preprocess():
 
     return adj, feature
 
-adj, feat = preprocess()
-
-print(1)
