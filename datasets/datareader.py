@@ -20,7 +20,7 @@ class Datareader:
         # need_col = ['reviewerID', 'asin', 'summary', 'overall']
 
         music_dict = {}
-        with open("Digital_Music_5.json") as fp:
+        with open("datasets/Digital_Music_5.json") as fp:
             for music in fp.readlines():
                 line = json.loads(music)
                 reviewer = line['reviewerID']
@@ -35,7 +35,7 @@ class Datareader:
             print(len(music_dict))
 
         fashion_dict = {}
-        with open("AMAZON_FASHION_5.json") as fp:
+        with open("datasets/AMAZON_FASHION_5.json") as fp:
             for fashion in fp.readlines():
                 line = json.loads(fashion)
                 reviewer = line['reviewerID']

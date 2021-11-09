@@ -1,10 +1,14 @@
-import model.model.Net as Net
+import torch
+from model.model import Net
 from torch import optim
-from utils import NDCG, HR
+from model.utils import NDCG, HR
 
-def train(feature, adj, epochs=epochs):
-    model = Net(input_dim, output_dim, num_features_nonzero)
-    model.to(device)
+def train(feature, adj, epochs=200):
+    # feature = torch.sparse.FloatTensor(feature)
+    feat_dim = feature.shape[1]
+    num_features_nonzero = 0
+    model = Net(feat_dim, feat_dim, num_features_nonzero)
+    # model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.02)
     for epoch in range(epochs):
         out = model((feature, adj))

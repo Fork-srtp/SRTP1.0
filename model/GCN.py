@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from GraphConv import GraphConv
+from model.GraphConv import GraphConv
+
 
 class GCN(nn.Module):
     def __init__(self, input_dim, output_dim, num_features_nonzero):

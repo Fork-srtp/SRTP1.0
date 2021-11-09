@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils import sparse_dropout
+from model.utils import sparse_dropout
 
 class GraphConv(nn.Module):
     def __init__(self, input_dim, output_dim, num_features_nonzero,

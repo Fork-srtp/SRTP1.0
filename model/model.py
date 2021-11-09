@@ -1,9 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from GCN import GCN
-from mlp import MLP
+from model.GCN import GCN
+from model.mlp import MLP
 from sklearn.metrics.pairwise import cosine_similarity
+
 
 class Net(nn.Module):
     def __init__(self, input_dim, output_dim, num_features_nonzero):
