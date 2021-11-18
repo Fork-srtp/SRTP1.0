@@ -4,46 +4,30 @@ import torch.nn.functional as F
 from model.utils import sparse_dropout
 
 class GraphConv(nn.Module):
-    def __init__(self, input_dim, output_dim, num_features_nonzero,
-                 is_sparse=False,
-                 bias=False, 
-                 dropout=0.,
-                 featureless=False):
+    def __init__(self, input_dim, output_dim, dropout=0.):
         super().__init__()
 
-        self.is_sparse = is_sparse
-        self.bias = bias
         self.dropout = dropout
-        self.num_features_nonzero = num_features_nonzero
-        self.featureless = featureless
 
-        self.weight = nn.Parameter(torch.randn(input_dim, output_dim))
-        self.bias = None
-        if bias:
-            self.bias = nn.Parameter(torch.zeros(output_dim))
+        self.weight = nn.Parameter(torch.randn(input_dim, output_dim), requires_grad=True)
+        self.bias = nn.Parameter(torch.zeros(output_dim), requires_grad=True)
 
-    def forward(self, input):
-        x, sup = input
+    def forward(self, A, features):
+        I = torch.eye(A.shape[0])
+        A_hat = A + I
 
-        if self.training and self.is_sparse:
-            x = sparse_dropout(x, 1 - self.dropout, self.num_features_nonzero)
-        elif self.training:
-            x = F.dropout(x, 1 - self.dropout)
+        D = torch.sum(A_hat, axis=0)
+        D = torch.diag(D)
+        D_inv = torch.inverse(D)
 
-        """Convolve"""
-        if not self.featureless:
-            if self.is_sparse:
-                x = torch.sparse.mm(x, self.weight)
-            else:
-                x = torch.mm(x, self.weight)
-        else:
-            x = self.weight
-        
-        out = torch.sparse.mm(sup, x)
+        A_hat = torch.mm(torch.mm(D_inv, A_hat), D_inv)
 
-        if self.bias is not None:
-            out += self.bias
+        features = F.dropout(features, 1 - self.dropout)
 
-        out = F.relu(out)
-        return out, sup
+        aggregate = torch.mm(A_hat, features)
+
+        propagate = torch.mm(aggregate, self.weight) + self.bias
+
+        out = F.relu(propagate)
+        return out
         

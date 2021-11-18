@@ -4,14 +4,14 @@ from torch import optim
 from model.utils import NDCG, HR
 
 def train(feature, adj, epochs=200):
-    # feature = torch.sparse.FloatTensor(feature)
     feat_dim = feature.shape[1]
     num_features_nonzero = 0
     model = Net(feat_dim, feat_dim, num_features_nonzero)
     # model.to(device)
     optimizer = optim.Adam(model.parameters(), lr=0.02)
+    rating = adj
     for epoch in range(epochs):
-        out = model((feature, adj))
+        out = model(adj, feature)
 
         loss = rating * torch.log(out) + (torch.ones_like(rating) - rating) * torch.log(torch.ones_like(out) - out)
 
@@ -24,7 +24,7 @@ def train(feature, adj, epochs=200):
 
     model.eval()
 
-    out = model((feature, adj))
+    out = model(adj, feature)
 
     print("NDCG@10: ", NDCG(rating, out))
     print("HR@10: ", HR(rating, out))

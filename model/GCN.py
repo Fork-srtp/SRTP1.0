@@ -8,18 +8,11 @@ class GCN(nn.Module):
     def __init__(self, input_dim, output_dim, num_features_nonzero):
         super().__init__()
 
-        self.layers = nn.Sequential(
-                            GraphConv(input_dim, 16, num_features_nonzero,
-                                      is_sparse=True,
-                                      dropout=0.5),
-                            GraphConv(16, output_dim, num_features_nonzero,
-                                      is_sparse=False,
-                                      dropout=0.5)
-                        )
+        self.layer1 = GraphConv(input_dim, 16, dropout=0.5)
+        self.layer2 = GraphConv(16, output_dim, dropout=0.5)
 
-    def forward(self, input):
-        x, sup = input
-
-        x = self.layers((x, sup))
+    def forward(self, A, features):
+        x = self.layer1(A, features)
+        x = self.layers(A, x)
 
         return x

@@ -14,9 +14,9 @@ class Net(nn.Module):
         self.umlp = MLP(input_dim)
         self.imlp = MLP(input_dim)
 
-    def forward(self, x):
-        x = self.GNN(x)
-        # m, n =
+    def forward(self, A, features):
+        x = self.GNN(A, features)
+        m, n = A.shape
         user, item = x.split([m, n], dim=0)
         user = self.umlp(user)
         item = self.imlp(user)
