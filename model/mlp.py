@@ -24,7 +24,7 @@ class MLP(nn.Module):
         self.relu6 = nn.ReLU()
 
     def forward(self, input):
-        x, sup = input
+        x = input
 
         x = self.fc1(x)
         x = self.relu1(x)

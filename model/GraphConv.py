@@ -22,8 +22,9 @@ class GraphConv(nn.Module):
 
         A_hat = torch.mm(torch.mm(D_inv, A_hat), D_inv)
 
-        features = F.dropout(features, 1 - self.dropout)
+        # features = F.dropout(features, 1 - self.dropout)
 
+        features = features.type(torch.FloatTensor)
         aggregate = torch.mm(A_hat, features)
 
         propagate = torch.mm(aggregate, self.weight) + self.bias

@@ -13,6 +13,6 @@ class GCN(nn.Module):
 
     def forward(self, A, features):
         x = self.layer1(A, features)
-        x = self.layers(A, x)
+        x = self.layer2(A, x)
 
         return x

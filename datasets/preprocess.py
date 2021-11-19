@@ -7,48 +7,23 @@ import torch
 import scipy.sparse as sp
 import numpy as np
 
-def normalize_adj(adj):
-    """Symmetrically normalize adjacency matrix."""
-    adj = sp.coo_matrix(adj)
-    rowsum = np.array(adj.sum(1)) # D
-    d_inv_sqrt = np.power(rowsum, -0.5).flatten() # D^-0.5
-    d_inv_sqrt[np.isinf(d_inv_sqrt)] = 0.
-    d_mat_inv_sqrt = sp.diags(d_inv_sqrt) # D^-0.5
-    return adj.dot(d_mat_inv_sqrt).transpose().dot(d_mat_inv_sqrt).tocoo() # D^-0.5AD^0.5
-
-def sparse_to_tuple(sparse_mx):
-    """
-    Convert sparse matrix to tuple representation.
-    """
-    def to_tuple(mx):
-        if not sp.isspmatrix_coo(mx):
-            mx = mx.tocoo()
-        coords = np.vstack((mx.row, mx.col)).transpose()
-        values = mx.data
-        shape = mx.shape
-        return coords, values, shape
-
-    if isinstance(sparse_mx, list):
-        for i in range(len(sparse_mx)):
-            sparse_mx[i] = to_tuple(sparse_mx[i])
-    else:
-        sparse_mx = to_tuple(sparse_mx)
-
-    return sparse_mx
-
 def preprocess():
     dr = Datareader()
     music_rating_dict, music_review_dict, item_music_dict, \
             fashion_rating_dict, fashion_review_dict, item_fashion_dict = dr.read_data()
     tagged_data = []
+    usernum = 0
     for user, reviews in music_review_dict.items():
+        usernum += 1
         str = ""
         for each in reviews:
             str += " "
             str += each[1]
         tagged_data.append(TaggedDocument(words=word_tokenize(str), tags=[user]))
 
+    itemnum = 0
     for item, reviews in item_music_dict.items():
+        itemnum += 1
         str = ""
         for each in reviews:
             str += " "
@@ -101,14 +76,15 @@ def preprocess():
     for each in nodelist:
         feature.append(each[1]['feature'])
 
-    feature = torch.FloatTensor(feature)
+    feature = torch.LongTensor(feature)
 
     adj_matrix = nx.adjacency_matrix(G)
-    adj_normalized = normalize_adj(adj_matrix + sp.eye(adj_matrix.shape[0]))
-    adj_matrix = sparse_to_tuple(adj_normalized)
-    i = torch.from_numpy(adj_matrix[0]).long()
-    v = torch.from_numpy(adj_matrix[1])
-    adj = torch.sparse.FloatTensor(i.t(), v, adj_matrix[2]).float()
+    e = list(G.edges.data())
+    adj = torch.zeros(usernum + itemnum, usernum + itemnum)
+
+    for edge in e:
+        adj[edge[0]][edge[1]] = edge[2]['weight']
+        adj[edge[1]][edge[0]] = edge[2]['weight']
+    adj = adj.type(torch.LongTensor)
 
     return adj, feature
-

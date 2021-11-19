@@ -16,9 +16,9 @@ class Net(nn.Module):
 
     def forward(self, A, features):
         x = self.GNN(A, features)
-        m, n = A.shape
+        m, n = 1, 7
         user, item = x.split([m, n], dim=0)
         user = self.umlp(user)
-        item = self.imlp(user)
-        out = torch.tensor(cosine_similarity(user, item))
+        item = self.imlp(item)
+        out = torch.tensor(cosine_similarity(user.detach(), item.detach()), requires_grad=True)
         return out
