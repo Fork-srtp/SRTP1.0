@@ -20,7 +20,7 @@ class Datareader:
         # need_col = ['reviewerID', 'asin', 'summary', 'overall']
 
         music_dict = {}
-        with open("datasets/Digital_Music_5.json") as fp:
+        with open("datasets/Arts_Crafts_and_Sewing_5.json") as fp:
             for music in fp.readlines():
                 line = json.loads(music)
                 reviewer = line['reviewerID']
@@ -35,11 +35,13 @@ class Datareader:
             print(len(music_dict))
 
         fashion_dict = {}
-        with open("datasets/AMAZON_FASHION_5.json") as fp:
+        with open("datasets/Luxury_Beauty_5.json") as fp:
             for fashion in fp.readlines():
                 line = json.loads(fashion)
                 reviewer = line['reviewerID']
                 item = line['asin']
+                if 'summary' not in line.keys():
+                    continue
                 review = line['summary']
                 rating = line['overall']
                 if reviewer not in fashion_dict:
@@ -92,7 +94,7 @@ class Datareader:
                 self.fashion_review_dict[reviewer] += [[item, review]]
                 self.fashion_rating_dict[reviewer] += [[item, rating]]
 
-        print(self.music_review_dict)
+        # print(self.music_review_dict)
         print('user:', len(self.music_review_dict.keys()))
 
         # construct item dictionary

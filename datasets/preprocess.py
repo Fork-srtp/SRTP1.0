@@ -83,8 +83,8 @@ def preprocess():
     adj = torch.zeros(usernum + itemnum, usernum + itemnum)
 
     for edge in e:
-        adj[edge[0]][edge[1]] = edge[2]['weight']
-        adj[edge[1]][edge[0]] = edge[2]['weight']
-    adj = adj.type(torch.LongTensor)
+        adj[edge[0]][edge[1]] = edge[2]['weight'] / 5
+        adj[edge[1]][edge[0]] = edge[2]['weight'] / 5
+    adj = adj.type(torch.FloatTensor)
 
-    return adj, feature
+    return adj, feature, usernum, itemnum
