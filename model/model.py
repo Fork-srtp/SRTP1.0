@@ -22,5 +22,7 @@ class Net(nn.Module):
         user, item = x.split([m, n], dim=0)
         user = self.umlp(user)
         item = self.imlp(item)
-        out = torch.tensor(cosine_similarity(user.detach(), item.detach()), requires_grad=True)
+        out = torch.zeros(0)
+        for i in range(user.size(dim=0)):
+            out = torch.cat((out, torch.clamp(torch.cosine_similarity(user[i].view(1, -1), item).view(1, -1), min=1e-6, max=1)), dim=0)
         return out

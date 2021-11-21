@@ -31,8 +31,8 @@ def preprocess():
         tagged_data.append(TaggedDocument(words=word_tokenize(str), tags=[item]))
         
 
-    max_epochs = 100
-    vec_size = 20
+    max_epochs = 1
+    vec_size = 10
     alpha = 0.025
 
     model = Doc2Vec(dm=1,
@@ -51,8 +51,8 @@ def preprocess():
         model.alpha -= 0.0002
         # fix the learning rate, no decay
         model.min_alpha = model.alpha
-        if epoch % 10 == 0:
-            print('iteration {0}'.format(epoch))
+        if (epoch + 1) % 10 == 0:
+            print('iteration {0}'.format(epoch + 1))
 
     # print(model.dv['A2UUEV4MYOJY66'])
 
